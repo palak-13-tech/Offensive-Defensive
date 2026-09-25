@@ -1,1 +1,30 @@
+import hashlib
+import random
 
+secret = "mysecret"
+
+nonce = str(random.randint(100000, 999999))
+print("Challenge:", nonce)
+
+response = hashlib.sha256(
+    (nonce + secret).encode()
+).hexdigest()
+
+print("Response:", response)
+
+expected = hashlib.sha256(
+    (nonce + secret).encode()
+).hexdigest()
+
+if response == expected:
+    print("Authentication successful")
+else:
+    print("Authentication failed")
+
+old_response = response
+nonce = str(random.randint(100000, 999999))
+
+if old_response != hashlib.sha256(
+    (nonce + secret).encode()
+).hexdigest():
+    print("Replay attack detected")
