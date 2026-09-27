@@ -19,5 +19,4 @@ To identify active hosts, open ports, running services, and known vulnerabilitie
 8. Review Vulnerabilities
 9. Document Findings
 
-The active hosts, open ports, running services, and known vulnerabilities of the target network were identified and documented.# Offensive-Defensive
-Practical work, labs, notes, and projects related to Offensive and Defensive Cybersecurity.
+The active hosts, open ports, running services, and known vulnerabilities of the target network were identified and documented.
