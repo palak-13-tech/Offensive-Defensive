@@ -208,7 +208,3 @@ These observations help illustrate network communication and the effects that in
 
 The experiment demonstrated the basic operation of ARP spoofing in a virtual lab and the use of Wireshark to analyze ICMP, TCP, ARP-related activity, and HTTP requests. It also highlighted the security weaknesses of unencrypted HTTP communication and the importance of network monitoring and defensive controls.
 
-## Ethical Considerations
-
-This experiment is intended strictly for educational purposes in an isolated virtual lab. ARP spoofing and traffic interception must only be performed on systems and networks for which explicit authorization has been granted.
-
