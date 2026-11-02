@@ -8,18 +8,17 @@ Google was used with the site:rockstargames.com, intitle:"Rockstar Games", and f
 Results
 Google returned Rockstar-related pages and PDF results. The Shodan hostname search displayed publicly indexed Rockstar-related hosts and service information.
 
-Screenshots
-1. Google site:rockstargames.com
-![Google site search] (Screenshot%202026-11-01%20202811(1).png)
+### 1. Google `site:rockstargames.com`
+![Google site search](Screenshot%202026-11-01%20202811(1).png)
 
-2. Google intitle:"Rockstar Games"
-![Google intitle search] (Screenshot%202026-11-01%20202833(1).png)
+### 2. Google `intitle:"Rockstar Games"`
+![Google intitle search](Screenshot%202026-11-01%20202833(1).png)
 
-4. Google filetype:pdf
-Google PDF search (Screenshot%202026-11-01%20202850(1).png)
+### 3. Google `filetype:pdf`
+![Google PDF search](Screenshot%202026-11-01%20202850(1).png)
 
-5. Shodan homepage
-Shodan homepage (Screenshot%202026-11-01%20202947.png)
+### 4. Shodan homepage
+![Shodan homepage](Screenshot%202026-11-01%20202947.png)
 
-6. Shodan hostname:rockstargames.com
-Shodan hostname search (Screenshot%202026-11-01%20203218.png)
+### 5. Shodan `hostname:rockstargames.com`
+![Shodan hostname search](Screenshot%202026-11-01%20203218.png)
