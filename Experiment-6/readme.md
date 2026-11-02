@@ -103,20 +103,21 @@ SQL Injection and Reflected XSS are expected areas to examine in DVWA, but neith
 5. Conclusion
 OWASP ZAP was used to explore DVWA, crawl its routes, run an Active Scan, and produce an alert report. The supplied report records 23 alerts across High, Medium, Low, and Informational risk levels. The exercise demonstrates why authenticated coverage, scanner configuration, report review, and manual verification all matter when assessing a web application. In a real deployment, confirmed findings should lead to appropriate patching, safer configuration, stronger transport security, and removal of unnecessary exposure.
 
-6. Screenshot index
+## 6. Screenshot index
+
 All nine screenshots available with this task are embedded or linked above:
 
-Image	What it documents
-113610.png	ZAP launch
-113755.png	ZAP welcome screen
-114038.png	ZAP workspace
-114045.png	DVWA site tree and requests
-114434.png	Spider scan setup
-114454.png	Active Scan setup
-120626.png	Alert list
-121001.png	Report risk/confidence summary
-121020.png	Report cover and contents
-The target-IP, ping, and DVWA security-level screenshots were not included with the available image files, so they are not linked here.
+| Image | What it documents |
+|---|---|
+| `113610.png` | ZAP launch |
+| `113755.png` | ZAP welcome screen |
+| `114038.png` | ZAP workspace |
+| `114045.png` | DVWA site tree and requests |
+| `114434.png` | Spider scan setup |
+| `114454.png` | Active Scan setup |
+| `120626.png` | Alert list |
+| `121001.png` | Report risk/confidence summary |
+| `121020.png` | Report cover and contents |
 
 7. Repository layout
 Experiment/
