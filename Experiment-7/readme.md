@@ -10,10 +10,10 @@ Google returned Rockstar-related pages and PDF results. The Shodan hostname sear
 
 Screenshots
 1. Google site:rockstargames.com
-Google site search (Screenshot%202026-11-01%20202811(1).png)
+![Google site search] (Screenshot%202026-11-01%20202811(1).png)
 
 2. Google intitle:"Rockstar Games"
-Google intitle search (Screenshot%202026-11-01%20202833(1).png)
+![Google intitle search] (Screenshot%202026-11-01%20202833(1).png)
 
 4. Google filetype:pdf
 Google PDF search (Screenshot%202026-11-01%20202850(1).png)
