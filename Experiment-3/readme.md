@@ -1,325 +1,193 @@
-# Experiment 3: Basic Network Traffic Analysis with Wireshark
+# Experiment 3 — Basic Network Traffic Analysis with Wireshark
 
-## Objective
+**Course:** Offensive & Defensive Security Lab
+**Objective:** Capture and examine network packets to detect suspicious activity and cleartext credentials in a simulated lab network.
 
-To capture and analyze network packets using Wireshark and identify network traffic and plaintext information transmitted over insecure protocols in an isolated laboratory environment.
+---
 
-## Environment
+##  Aim
 
-- Kali Linux – Attacker/Analysis Machine
-- Metasploitable 2 – Victim/Test Machine
-- VirtualBox / VMware
-- Host-Only Adapter or Internal Network
-- Wireshark
-- Nmap
-- tcpdump
-- tshark
+To set up an isolated attacker–victim lab environment, capture live network traffic using Wireshark, and identify plaintext credentials transmitted over insecure protocols (FTP, Telnet, HTTP).
 
-## Network Configuration
+---
 
-Both Kali Linux and Metasploitable 2 were configured on an isolated Host-Only Adapter or Internal Network.
+## Environment Setup
+
+**Cybersecurity Lab Ecosystem**
+- **Attacker:** Kali Linux
+- **Victim/Test:** Metasploitable 2
+
+### Configuration
+- Both VMs run in VirtualBox / VMware
+- Network adapter set to **Host-Only Adapter** or **Internal Network** (isolated — no production traffic)
+- Both machines powered on and network-reachable
 
 ### IP Addresses Used
-
 | Machine | Role | IP Address |
 |---|---|---|
-| Kali Linux | Attacker/Analysis | 192.168.247.129 |
-| Metasploitable 2 | Victim/Test | 192.168.247.130 |
+| Kali Linux | Attacker | `192.168.247.129` |
+| Metasploitable 2 | Victim | `192.168.247.130` |
 
-## Quick Pre-Checks
+---
 
-First, verify the network configuration of both virtual machines.
+##  Quick Pre-checks
 
-### On Kali Linux
+Confirm network mode is Host-Only/Internal (no production traffic), then verify IPs and tools.
 
 ```bash
+# On Kali
 ip a
 
-### On Metasploitable 2
-
-```bash
+# On Metasploitable
 ifconfig
+```
 
-### Install Required Tools
-
-Update the Kali Linux package list and install the required tools:
+Ensure required tools are installed on Kali:
 
 ```bash
 sudo apt update
 sudo apt install nmap wireshark tcpdump tshark -y
 ```
 
-### Start Wireshark
-
-Launch Wireshark:
+Start Wireshark with capture privileges (lab only):
 
 ```bash
 sudo wireshark
 ```
 
-## Procedure
+---
 
-### 1. Verify Connectivity
-
-Check whether Kali Linux can communicate with Metasploitable 2:
+## Step 1 — Verify Connectivity
 
 ```bash
 ping -c 3 192.168.247.130
 ```
 
-A successful response confirms connectivity between the two machines.
+**Expected output:**
+```
+64 bytes from 192.168.247.130: icmp_seq=1 ttl=64 time=0.0XX ms
+```
 
-### 2. Perform Quick Port/Service Scan
+---
 
-Use Nmap to identify open ports and services running on Metasploitable 2:
+## Step 2 — Quick Port/Service Scan (Nmap)
 
 ```bash
 sudo nmap -sS -Pn 192.168.247.130
 ```
 
-Example output:
-
-```text
-PORT     STATE  SERVICE
-21/tcp   open   ftp
-22/tcp   open   ssh
-23/tcp   open   telnet
-80/tcp   open   http
-139/tcp  open   netbios-ssn
-445/tcp  open   microsoft-ds
+**Expected output (sample):**
+```
+PORT    STATE SERVICE
+21/tcp  open  ftp
+22/tcp  open  ssh
+23/tcp  open  telnet
+80/tcp  open  http
+139/tcp open  netbios-ssn
+445/tcp open  microsoft-ds
 ```
 
-### 3. Start Wireshark Capture
+---
 
-Open Wireshark and select the network interface connected to the isolated lab network.
+## Step 3 — Start Wireshark Capture (GUI)
 
-Common interfaces may include:
+1. Open Wireshark → select the network interface (e.g., `eth0`, `ens33`).
+2. Set a capture filter to limit noise:
+   ```
+   host 192.168.247.130
+   ```
+3. Click **Start** to begin capturing live packets.
 
-```text
-eth0
-ens33
-```
+---
 
-Start the packet capture.
+## Step 4 — Generate Lab Traffic
 
-Use the following capture filter:
+Run these from Kali while Wireshark is capturing:
 
-```text
-host 192.168.247.130
-```
-
-This captures traffic involving the Metasploitable 2 machine.
-
-### 4. Generate HTTP Traffic
-
-While Wireshark is capturing packets, generate HTTP traffic from Kali Linux:
-
+**HTTP GET**
 ```bash
 curl http://192.168.247.130/
 ```
 
-### 5. Generate FTP Traffic
-
-Connect to the FTP service running on the Metasploitable 2 test machine:
-
+**FTP login** (Metasploitable default credentials often exist)
 ```bash
 ftp 192.168.247.130
+# username: msfadmin   password: msfadmin
 ```
 
-Use the authorized test credentials provided for the lab environment.
-
-### 6. Generate Telnet Traffic
-
-Connect to the Telnet service:
-
+**Telnet login**
 ```bash
 telnet 192.168.247.130
+# login: msfadmin   password: msfadmin
 ```
 
-Use the authorized test credentials provided for the lab environment.
+> **Note:** Run each interaction while Wireshark is actively capturing.
 
-### 7. Analyze Captured Traffic
+---
 
-Use Wireshark display filters to identify specific network traffic.
-
-#### Target Machine Traffic
-
-```text
-ip.addr == 192.168.247.130
-```
-
-#### FTP Requests
-
-```text
-ftp.request.command == "USER" || ftp.request.command == "PASS"
-```
-
-#### Telnet Traffic
-
-```text
-telnet
-```
-
-#### HTTP Traffic
-
-```text
-http
-```
-
-#### HTTP Authorization
-
-```text
-http.authorization
-```
-
-### 8. Follow TCP Stream
-
-Select an FTP or Telnet packet in Wireshark.
-
-Then select:
-
-**Right-click → Follow → TCP Stream**
-
-This displays the communication between the two endpoints as a complete stream.
-
-In the isolated laboratory environment, this demonstrates how plaintext protocols can expose information during transmission.
-
-### 9. Save the Packet Capture
-
-Save the captured packets for documentation and further analysis.
-
-Go to:
-
-**File → Save As**
-
-Save the file as:
-
-```text
-lab_capture.pcap
-```
-
-### 10. Export HTTP Objects
-
-If HTTP objects are present in the capture, use:
-
-**File → Export Objects → HTTP**
-
-to examine relevant objects from the laboratory capture.
-
-## Wireshark Display Filters
+## Step 5 — Find Plaintext Credentials (Display Filters)
 
 | Purpose | Filter |
 |---|---|
 | All traffic to/from target | `ip.addr == 192.168.247.130` |
-| FTP USER/PASS requests | `ftp.request.command == "USER" || ftp.request.command == "PASS"` |
-| Telnet traffic | `telnet` |
+| FTP commands/credentials | `ftp.request.command == "USER" \|\| ftp.request.command == "PASS"` |
+| Telnet sessions (plaintext) | `telnet` |
 | HTTP traffic | `http` |
-| HTTP Authorization | `http.authorization` |
+| HTTP Basic Auth header | `http.authorization` |
 
-## Screenshots
+Right-click any FTP/Telnet packet → **Follow → TCP Stream** to view the full plaintext session, including usernames and passwords.
 
-### 1. Network Configuration
+---
 
-Add a screenshot showing the IP addresses of Kali Linux and Metasploitable 2.
+## Step 6 — Save Capture & Export Evidence
 
-![Network Configuration](screenshots/network-configuration.png)
+- `File → Save As → lab_capture.pcap`
+- `File → Export Objects → HTTP` to save extracted HTML/images
+- Keep `lab_capture.pcap` attached to the lab report as evidence
 
-### 2. Connectivity Test
+---
 
-Add a screenshot showing the successful ping from Kali Linux to Metasploitable 2.
+##  Web Resources
 
-![Connectivity Test](screenshots/connectivity-test.png)
+1. Nmap scanning demo
+2. Kali Linux download
+3. VirtualBox download
+4. Metasploitable 2 download
+5. Nessus installation and demo
 
-### 3. Nmap Scan
+---
 
-Add a screenshot showing the open ports and services discovered using Nmap.
+##  Reflective Questions
 
-![Nmap Scan](screenshots/nmap-scan.png)
+### 1. Understanding Tools
+- What is the difference between Nmap scanning and Nessus vulnerability scanning?
+- Why is it dangerous to leave unnecessary ports open?
 
-### 4. Wireshark Packet Capture
+### 2. Hands-On Learning
+- Which open ports did you find on the Metasploitable machine?
+- Which critical vulnerabilities did Nessus detect?
+- Did any Nessus findings map directly to your Nmap scan results?
 
-Add a screenshot showing Wireshark capturing packets from the lab network.
+### 3. Security Perspective
+- If you were a system administrator, how would you fix or mitigate the vulnerabilities found?
+- How could an attacker use the Nmap and Nessus results to plan an exploit?
 
-![Wireshark Capture](screenshots/wireshark-capture.png)
+### 4. Ethical Consideration
+- Why must we use a test environment (VMs) instead of scanning real-world systems?
+- How does this exercise relate to the concept of ethical hacking?
 
-### 5. Network Traffic Analysis
+### 5. Application to Real World
+- How can organizations use vulnerability scanning as part of their cybersecurity defense strategy?
+- What is one lesson from this lab you would apply in securing a real company network?
 
-Add a screenshot showing the captured HTTP, FTP, or Telnet traffic.
+---
 
-![Network Traffic](screenshots/network-traffic.png)
+##  Summary
 
-### 6. Packet Analysis
+In this lab, an isolated cybersecurity environment was built using Kali Linux (attacker) and Metasploitable 2 (victim) inside VirtualBox. Nmap was used to identify open ports and running services on the target machine, and Wireshark was used to capture and analyze traffic generated by FTP, Telnet, and HTTP sessions. The capture revealed that these protocols transmit credentials in **plaintext**, demonstrating why unencrypted services pose a real security risk. The exercise highlights the importance of patching vulnerable services, disabling unnecessary open ports, and preferring encrypted protocols (SFTP/SSH, HTTPS) in real-world networks.
 
-Add a screenshot showing packet details or TCP Stream analysis.
-
-![Packet Analysis](screenshots/packet-analysis.png)
-
-## Result
-
-Network traffic between Kali Linux and Metasploitable 2 was successfully captured and analyzed using Wireshark. Nmap was used to identify open ports and services, while HTTP, FTP, and Telnet traffic was generated and examined in the isolated laboratory environment.
-
-The captured packets demonstrated how insecure protocols can transmit information without adequate encryption.
-
-## Learning Outcomes
-
-After completing this experiment, the following concepts were understood:
-
-- Basic network packet capture
-- Wireshark interface selection
-- Network traffic analysis
-- Nmap port and service scanning
-- Wireshark capture and display filters
-- TCP stream analysis
-- HTTP traffic analysis
-- FTP traffic analysis
-- Telnet traffic analysis
-- Security risks of plaintext protocols
-- Importance of encrypted network communication
-
-## Questions for Analysis
-
-### 1. Why is packet capture useful in cybersecurity?
-
-Packet capture allows security analysts to inspect network communication and identify unusual, suspicious, or potentially malicious traffic.
-
-### 2. Why are FTP and Telnet considered insecure?
-
-FTP and Telnet can transmit information without strong encryption, which may expose sensitive information to someone who can observe the network traffic.
-
-### 3. What is the purpose of Wireshark filters?
-
-Wireshark filters help analysts focus on specific packets or protocols instead of manually examining all captured traffic.
-
-### 4. What is TCP Stream analysis?
-
-TCP Stream analysis reconstructs the communication between two endpoints so that the exchanged data can be examined as a complete conversation.
-
-### 5. What are secure alternatives to insecure protocols?
-
-Examples include:
-
-- SSH instead of Telnet
-- SFTP instead of traditional FTP
-- HTTPS instead of HTTP
-
-## Ethical Consideration
-
-This experiment was performed only in an isolated virtual laboratory using Metasploitable 2 as the intentionally vulnerable test machine.
-
-Packet capture and network analysis should only be performed on systems and networks for which proper authorization has been obtained.
-
-## Summary
-
-In this experiment, an isolated cybersecurity laboratory was created using Kali Linux and Metasploitable 2. Nmap was used to identify open ports and running services, while Wireshark was used to capture and analyze network traffic.
-
-HTTP, FTP, and Telnet traffic were generated and examined to understand how insecure protocols can expose information during transmission. The experiment demonstrated the importance of using secure protocols for protecting network communications.
-
-## Conclusion
-
-The experiment demonstrated the practical use of Wireshark for network traffic capture and analysis. By examining traffic between Kali Linux and Metasploitable 2, different protocols and communication patterns were identified.
-
-The exercise provided practical knowledge of packet analysis and showed why encrypted protocols such as HTTPS, SSH, and SFTP should be preferred over insecure plaintext protocols.
+---
 
 ## Disclaimer
 
-This experiment was performed entirely within an isolated virtual laboratory environment for educational purposes. The techniques and tools described in this experiment should not be used against systems or networks without explicit authorization.
+This lab was performed entirely within an isolated virtual lab environment (Host-Only/Internal network) for educational purposes only. None of the techniques described here should be used against systems or networks without explicit authorization.
