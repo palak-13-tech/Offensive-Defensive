@@ -33,4 +33,3 @@ Hydra reported a valid FTP login: **`msfadmin : msfadmin`**. The successful matc
 
 The lab demonstrated password guessing against FTP on the isolated Metasploitable 2 VM. Only the completed FTP result is reported here; the instructor asked us to leave Telnet out of the experiment report.
 
-
